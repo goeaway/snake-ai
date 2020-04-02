@@ -177,7 +177,7 @@ namespace Snake.AI
         public static List<Direction> LongestRouteDirections<T>(
             T[,] grid, 
             (int X, int Y) from, 
-            (int X, int Y) to, 
+            (int X, int Y) to,  
             params (int X, int Y)[] disallowed)
         {
             var positions = ShortestRoutePositions(grid, from, to, disallowed);

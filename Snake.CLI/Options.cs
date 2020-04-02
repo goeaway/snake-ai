@@ -16,4 +16,4 @@ namespace Snake.CLI
         [Option('p', "Power Ups", HelpText = "Additional items with will occasionally drop. Some more useful than others")]
         public bool Powerups { get; set; }
     }
-}
+} 

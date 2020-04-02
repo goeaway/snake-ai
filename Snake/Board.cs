@@ -12,7 +12,7 @@ namespace Snake
 
         private readonly string[,] _board;
 
-        public (int, int) Bounds { get; }
+        public (int, int) Bounds { get; } 
 
         public Board(int xSize, int ySize)
         {

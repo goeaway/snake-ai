@@ -21,7 +21,7 @@ namespace Snake.CLI
 
                 var refreshRate = GetRefreshRateForDifficulty(o.Difficulty);
 
-                while (true)
+                while (true) 
                 {
                     // todo change to bounds of game board
                     Console.SetCursorPosition(0, 0);

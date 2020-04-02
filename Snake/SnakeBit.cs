@@ -13,7 +13,7 @@ namespace Snake
 
         public SnakeBit(int x, int y, SnakeBit head)
         {
-            Head = head;
+            Head = head; 
             Position = (x, y);
         }
 

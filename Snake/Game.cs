@@ -25,7 +25,7 @@ namespace Snake
 
             AddFood();
 
-            var (x, y) = board.Bounds;
+            var (x, y) = board.Bounds; 
 
             AddSnake(2, 0);
         }

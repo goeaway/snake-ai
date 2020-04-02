@@ -12,7 +12,7 @@ namespace Snake
         Down
     }
 
-    public static class DirectionExtensions
+    public static class DirectionExtensions 
     {
         public static Direction GetDirectionFromXY((int X, int Y) posA, (int X, int Y) posB)
         {

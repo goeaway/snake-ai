@@ -12,12 +12,12 @@ namespace Snake.AI.CLI
             {
                 Console.SetCursorPosition(0,0);
                 Console.WriteLine(board);
-                Thread.Sleep(5);
+                Thread.Sleep(25);
             });
 
             while (true)
             {
-                var result = controller.Act(new Game(new Board(40, 20), Direction.Right));
+                var result = controller.Act(new Game(new Board(20, 10), Direction.Right));
 
                 Thread.Sleep(500);
             }

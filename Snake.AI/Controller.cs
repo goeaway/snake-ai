@@ -33,7 +33,7 @@ namespace Snake.AI
                 if (game.Board.GetEmpty().Count() == 0)
                 {
                     break;
-                }
+                } 
 
                 var direction = hamiltonianPath[i];
                 if (!game.Move(direction))

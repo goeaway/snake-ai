@@ -8,7 +8,7 @@ using Snake.AI;
 namespace Snake.Tests
 {
     [TestClass]
-    public class HamiltonianCycleTests
+    public class Tests
     {
         [TestMethod]
         public void AStar_Gets_The_Best_Route()
