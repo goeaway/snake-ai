@@ -27,7 +27,7 @@ namespace Snake
 
             var (x, y) = board.Bounds; 
 
-            AddSnake(2, 0);
+            AddSnake(x / 2, y / 2);
         }
 
         private void AddFood()
@@ -36,11 +36,6 @@ namespace Snake
             var (x, y) = empty[_randomiser.Next(0, empty.Count)];
 
             Board.Update(x, y, Board.Food);
-        }
-
-        private void AddPowerup()
-        {
-
         }
 
         private void AddSnake(int x, int y)
@@ -160,11 +155,13 @@ namespace Snake
             // and replace the food
             if (nextValue == Board.Food)
             {
-                AddFood();
                 AddSnake(tailX, tailY);
-                AddPowerup();
             }
 
+            if (Board.GetFoodPosition() == (-1, -1))
+            {
+                AddFood();
+            }
 
             _lastDirection = direction;
             return true;

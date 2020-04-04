@@ -95,6 +95,18 @@ namespace Snake.AI
             return result;
         }
 
+        private static List<(int X, int Y)> ConvertToPositions((int X, int Y) start, List<Direction> directions)
+        {
+            var result = new List<(int X, int Y)> { start };
+
+            for (var i = 0; i < directions.Count; i++)
+            {
+                result.Add(GetAdjacent(result[i], directions[i]));
+            }
+
+            return result;
+        }
+
         private static bool PositionValid<T>(T[,] grid, (int X, int Y) position, (int X, int Y)[] disallowed)
         {
             return PositionInGrid(grid, position) && !disallowed.Contains(position);
@@ -105,14 +117,7 @@ namespace Snake.AI
             (int X, int Y) to,
             params (int X, int Y)[] disallowed)
         {
-            var path = new List<(int X, int Y)>();
-
-            var start = new PathPiece { Position = from };
-
-            var open = new List<PathPiece>
-            {
-                { start }
-            };
+            var open = new List<PathPiece> { new PathPiece { Position = from } };
             var closed = new List<PathPiece>();
 
             var xMax = grid.GetUpperBound(1);
@@ -165,27 +170,21 @@ namespace Snake.AI
                 }
             }
 
-            return null;
+            return new List<(int X, int Y)>();
         }
 
-        public static List<Direction> ShortestRouteDirections<T>(
-            T[,] grid, 
-            (int X, int Y) from, 
-            (int X, int Y) to, 
-            params (int X, int Y)[] disallowed) => ConvertToDirections(ShortestRoutePositions(grid, from, to, disallowed));
-
-        public static List<Direction> LongestRouteDirections<T>(
+        public static List<(int X, int Y)> LongestRouteDirections<T>(
             T[,] grid, 
             (int X, int Y) from, 
             (int X, int Y) to,  
             params (int X, int Y)[] disallowed)
         {
-            var positions = ShortestRoutePositions(grid, from, to, disallowed);
-            var directions = ConvertToDirections(positions);
+            var shortestRoutePositions = ShortestRoutePositions(grid, from, to, disallowed);
+            var directions = ConvertToDirections(shortestRoutePositions);
 
-            var currentPos = positions.First();
+            var currentPos = shortestRoutePositions.First();
             var index = 0;
-            var alreadyAddedPositions = new List<(int X, int Y)>(positions);
+            var alreadyAddedPositions = new List<(int X, int Y)>(shortestRoutePositions);
 
             while(true)
             {
@@ -195,7 +194,7 @@ namespace Snake.AI
                 var nextPos = GetAdjacent(currentPos, currentDirection);
                 var extended = false;
 
-                // test the two directions perpendicular to the current one
+                // test the two directions perpendicular to the current one and next, if they're valid add them to the directions collection
                 foreach (var testDirection in currentDirection.GetPerpendicular())
                 {
                     var currentTest = GetAdjacent(currentPos, testDirection);
@@ -203,14 +202,17 @@ namespace Snake.AI
 
                     if (PositionValid(grid, currentTest, disallowed) && 
                         PositionValid(grid, nextTest, disallowed) &&
-                        !alreadyAddedPositions.Any(ap => (ap.X == currentTest.X && ap.Y == currentTest.Y) || (ap.X == nextTest.X && ap.Y == nextTest.Y)))
+                        !alreadyAddedPositions.Any(ap => 
+                            (ap.X == currentTest.X && ap.Y == currentTest.Y) || 
+                            (ap.X == nextTest.X && ap.Y == nextTest.Y)))
                     {
                         alreadyAddedPositions.Add(currentTest);
                         alreadyAddedPositions.Add(nextTest);
+
                         directions.Insert(index, testDirection);
                         directions.Insert(index + 2, testDirection.GetOpposite());
-                        extended = true;
 
+                        extended = true;
                         break;
                     }
                 }
@@ -226,18 +228,16 @@ namespace Snake.AI
                 }
             }
 
-            return directions;
+            return ConvertToPositions(from, directions);
         }
 
-        public static List<Direction> HamiltonianCycle<T>(
+        public static List<(int X, int Y)> HamiltonianCycle<T>(
             T[,] grid)
         {
+            // disallow 1,0 so we know it won't be added to the path
             var path = LongestRouteDirections(grid, (2, 0), (0, 0), (1, 0));
-
-            // get from 0,0 to 1,0
-            path.Add(Direction.Right);
-            // get from 1,0 to 2,0
-            path.Add(Direction.Right);
+            // create a cycle by ending with 1,0
+            path.Add((1,0));
             return path.ToList();
         }
     }

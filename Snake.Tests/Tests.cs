@@ -71,6 +71,7 @@ namespace Snake.Tests
 
             var path = RoutingEngine.LongestRouteDirections(grid, (2, 0), (0, 0), (1, 0));
             Assert.AreEqual(41, path.Count);
+            Assert.AreEqual((0,0), path.Last());
         }
 
 

@@ -12,7 +12,9 @@ namespace Snake
 
         private readonly string[,] _board;
 
-        public (int, int) Bounds { get; } 
+        public (int X, int Y) Bounds { get; }
+
+        public int Count => Bounds.X * Bounds.Y;
 
         public Board(int xSize, int ySize)
         {
@@ -133,10 +135,10 @@ namespace Snake
 
             builder.AppendLine(new string('_', xBound + 2));
 
-            for (var y = 0; y < Bounds.Item2; y++)
+            for (var y = 0; y < Bounds.Y; y++)
             {
                 builder.Append("|");
-                for (var x = 0; x < Bounds.Item1; x++)
+                for (var x = 0; x < Bounds.X; x++)
                 {
                     builder.Append(_board[y, x]);
                 }
