@@ -8,16 +8,11 @@ namespace Snake.AI.CLI
         static void Main(string[] args)
         {
             Console.CursorVisible = false;
-            var controller = new Controller(true, board =>
-            {
-                Console.SetCursorPosition(0,0);
-                Console.WriteLine(board);
-                Thread.Sleep(5);
-            });
+            var controller = new AIController(Guid.NewGuid().ToString(), new GameFactory(50, 20, Direction.Right));
 
             while (true)
             {
-                var result = controller.Act(new Game(new Board(50, 20), Direction.Right));
+                var result = controller.Act();
 
                 Thread.Sleep(500);
             }

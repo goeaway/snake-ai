@@ -1,8 +1,8 @@
 {
   "profiles": {
-    "SnakeAI.CLI": {
+    "Snake.CLI": {
       "commandName": "Project",
-      "commandLineArgs": "-d Medium -o"
+      "commandLineArgs": "-p 1 -a 1 -d Hard"
     }
   }
 }

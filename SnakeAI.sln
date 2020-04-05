@@ -6,12 +6,17 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Snake.Tests", "Snake.Tests\Snake.Tests.csproj", "{933A510E-AB4C-4DAE-9030-0DD11044B908}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Snake.CLI", "Snake.CLI\Snake.CLI.csproj", "{46CF643D-17AB-416F-AA9F-8965038EF4E9}"
+	ProjectSection(ProjectDependencies) = postProject
+		{0F345A8C-DFB7-4350-885B-73551AF6CA82} = {0F345A8C-DFB7-4350-885B-73551AF6CA82}
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Snake", "Snake\Snake.csproj", "{B9FCF3FD-EF27-46F1-9139-9F5E14C3289D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Snake.AI", "Snake.AI\Snake.AI.csproj", "{0F345A8C-DFB7-4350-885B-73551AF6CA82}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Snake.AI", "Snake.AI\Snake.AI.csproj", "{0F345A8C-DFB7-4350-885B-73551AF6CA82}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Snake.AI.CLI", "Snake.AI.CLI\Snake.AI.CLI.csproj", "{848E96A5-FFB2-4119-9235-BD42E7C0F5D2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Snake.AI.CLI", "Snake.AI.CLI\Snake.AI.CLI.csproj", "{848E96A5-FFB2-4119-9235-BD42E7C0F5D2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Snake.Players", "Snake.Players\Snake.Players.csproj", "{E19DD196-CF9B-456D-B287-5E501D722AE2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +44,10 @@ Global
 		{848E96A5-FFB2-4119-9235-BD42E7C0F5D2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{848E96A5-FFB2-4119-9235-BD42E7C0F5D2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{848E96A5-FFB2-4119-9235-BD42E7C0F5D2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E19DD196-CF9B-456D-B287-5E501D722AE2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E19DD196-CF9B-456D-B287-5E501D722AE2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E19DD196-CF9B-456D-B287-5E501D722AE2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E19DD196-CF9B-456D-B287-5E501D722AE2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

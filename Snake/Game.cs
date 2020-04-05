@@ -11,9 +11,9 @@ namespace Snake
 
         private Direction _lastDirection;
 
-        public bool AllowedOutOfBounds { get; set; }
         public bool Powerups { get; set; }
 
+        public int Score { get; private set; }
         public Board Board { get; }
         public SnakeBit Snake { get; private set; }
 
@@ -108,33 +108,11 @@ namespace Snake
             var (nextX, nextY) = GetNextPos(headPos, direction);
 
             var (xBound, yBound) = Board.Bounds;
-            // check if we're now outside of the board. If we are, and we're not allowed to be, return false
-            // otherwise update the nextX or Y to be on the other side of the board
+
+            // check if we're now outside of the board. If we are, return false
             if (nextX < 0 || nextX >= xBound || nextY < 0 || nextY >= yBound)
             {
-                if (!AllowedOutOfBounds)
-                {
-                    // snake died
-                    return false;
-                }
-
-                // otherwise update the nextX or nextY to go to the other side of the board
-                if (nextX < 0)
-                {
-                    nextX = xBound - 1;
-                }
-                else if (nextX >= xBound)
-                {
-                    nextX = 0;
-                }
-                else if (nextY < 0)
-                {
-                    nextY = yBound - 1;
-                }
-                else if (nextY >= yBound)
-                {
-                    nextY = 0;
-                }
+                return false;
             }
 
             var nextValue = Board.GetValue(nextX, nextY);
@@ -155,6 +133,7 @@ namespace Snake
             // and replace the food
             if (nextValue == Board.Food)
             {
+                Score++;
                 AddSnake(tailX, tailY);
             }
 

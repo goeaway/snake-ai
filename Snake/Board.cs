@@ -116,9 +116,9 @@ namespace Snake
         {
             var (xBound, yBound) = Bounds;
 
-            for (var yDim = 0; yDim < Bounds.Item2; yDim++)
+            for (var yDim = 0; yDim < Bounds.Y; yDim++)
             {
-                for (var xDim = 0; xDim < Bounds.Item1; xDim++)
+                for (var xDim = 0; xDim < Bounds.X; xDim++)
                 {
                     if (_board[yDim, xDim] == Empty || (itemCountsAsEmpty && _board[yDim, xDim] == Food))
                     {
@@ -131,6 +131,7 @@ namespace Snake
         public override string ToString()
         {
             var builder = new StringBuilder();
+
             var (xBound, yBound) = Bounds;
 
             builder.AppendLine(new string('_', xBound + 2));
@@ -148,6 +149,32 @@ namespace Snake
             builder.Append(new string('¯', xBound + 2));
 
             return builder.ToString();
+        }
+
+        public List<string> GetPrintLines()
+        {
+            var result = new List<string>();
+
+            var (xBound, yBound) = Bounds;
+
+            result.Add(new string('_', xBound + 2));
+
+            for (var y = 0; y < Bounds.Y; y++)
+            {
+                var line = "|";
+                for (var x = 0; x < Bounds.X; x++)
+                {
+                    line += _board[y, x];
+                }
+
+                line += "|";
+
+                result.Add(line);
+            }
+
+            result.Add(new string('¯', xBound + 2));
+
+            return result;
         }
 
         public string[,] ToMultiArray()

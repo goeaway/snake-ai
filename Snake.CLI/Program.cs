@@ -1,87 +1,35 @@
 ﻿ using System;
-using System.Threading;
-using CommandLine;
+using System.Collections.Generic;
+ using System.Threading;
+ using CommandLine;
+ using Snake.AI;
+ using Snake.Players;
 
 namespace Snake.CLI
 {
     class Program
     {
-        // hamiltonian cycle
         static void Main(string[] args) => Parser.Default.ParseArguments<Options>(args)
             .WithParsed(o =>
             {
-                var board = new Board(40, 20);
-                var currentDirection = Direction.Right;
+                var startDirection = Direction.Right;
 
-                var game = new Game(board, currentDirection)
+                var controllers = new List<IController>();
+                var gameFactory = new GameFactory(40, 20, startDirection, 1);
+
+                for (var i = 0; i < o.Players; i++)
                 {
-                    AllowedOutOfBounds = o.OpenWalls,
-                    Powerups = o.Powerups
-                };
-
-                var refreshRate = GetRefreshRateForDifficulty(o.Difficulty);
-
-                while (true) 
-                {
-                    // todo change to bounds of game board
-                    Console.SetCursorPosition(0, 0);
-                    Console.Write(board);
-
-                    Thread.Sleep(refreshRate);
-
-                    if (Console.KeyAvailable)
-                    {
-                        var key = Console.ReadKey(true).Key;
-
-                        if (key == ConsoleKey.LeftArrow)
-                        {
-                            currentDirection = Direction.Left;
-                        }
-
-                        else if (key == ConsoleKey.UpArrow)
-                        {
-                            currentDirection = Direction.Up;
-                        }
-
-                        else if (key == ConsoleKey.RightArrow)
-                        {
-                            currentDirection = Direction.Right;
-                        }
-
-                        else if (key == ConsoleKey.DownArrow)
-                        {
-                            currentDirection = Direction.Down;
-                        }
-
-                        else if (key == ConsoleKey.P)
-                        {
-                            Console.SetCursorPosition(22, 7);
-                            Console.Write("PAUSED");
-                            while (true)
-                            {
-                                if (Console.KeyAvailable)
-                                {
-                                    var pauseKey = Console.ReadKey(true).Key;
-
-                                    if (pauseKey == ConsoleKey.P)
-                                    {
-                                        break;
-                                    }
-                                }
-                                else
-                                {
-                                    Thread.Sleep(10);
-                                }
-                            }
-                        }
-                    }
-
-                    // game over
-                    if (!game.Move(currentDirection))
-                    {
-                        break;
-                    }
+                    controllers.Add(new PlayerController(GetDefaultPlayerOptions(i), gameFactory, startDirection));
                 }
+
+                for (var i = 0; i < o.AIPlayers; i++)
+                {
+                    controllers.Add(new AIController(GetDefaultAIOptions(i), gameFactory));
+                }
+
+                var gameManager = new GameManager(controllers);
+
+                gameManager.Play(GetRefreshRateForDifficulty(o.Difficulty), CancellationToken.None);
             });
 
         private static int GetRefreshRateForDifficulty(Difficulty difficulty)
@@ -98,6 +46,56 @@ namespace Snake.CLI
                     return 20;
                 default:
                     throw new NotSupportedException(difficulty.ToString());
+            }
+        }
+
+        private static PlayerOptions GetDefaultPlayerOptions(int index)
+        {
+            switch (index)
+            {
+                case 0:
+                    return new PlayerOptions
+                    {
+                        Id = "Player 1",
+                        Color = ConsoleColor.Yellow,
+                        Up = ConsoleKey.UpArrow,
+                        Right = ConsoleKey.RightArrow,
+                        Down = ConsoleKey.DownArrow,
+                        Left = ConsoleKey.LeftArrow
+                    };
+                case 1:
+                    return new PlayerOptions
+                    {
+                        Id = "Player 2",
+                        Color = ConsoleColor.Cyan,
+                        Up = ConsoleKey.W,
+                        Right = ConsoleKey.D,
+                        Down = ConsoleKey.S,
+                        Left = ConsoleKey.A
+                    };
+                default:
+                    throw new NotSupportedException("only 2 players supported");
+            }
+        }
+
+        private static AIOptions GetDefaultAIOptions(int index)
+        {
+            switch (index)
+            {
+                case 0:
+                    return new AIOptions
+                    {
+                        Id = "AI",
+                        Color = ConsoleColor.Red,
+                    };
+                case 1:
+                    return new AIOptions
+                    {
+                        Id = "AI",
+                        Color = ConsoleColor.Green,
+                    };
+                default:
+                    throw new NotSupportedException("only 2 players supported");
             }
         }
     }
