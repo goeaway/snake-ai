@@ -1,7 +1,10 @@
-﻿using System;
+﻿using Snake.Abstractions;
+using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Text;
+using Snake.ItemPickupHandlers;
 
 namespace Snake
 {
@@ -9,38 +12,43 @@ namespace Snake
     {
         private readonly Random _randomiser;
 
-        private Direction _lastDirection;
+        private Direction _currentDirection;
+        private IEnumerable<IItemPickupHandler> _pickupHandlers;
 
-        public bool Powerups { get; set; }
-
-        public int Score { get; private set; }
+        internal IReadOnlyCollection<IItemPickupHandler> PickupHandlers => _pickupHandlers.ToImmutableArray();
+        public int Score { get; internal set; }
+        public SnakeBit Snake { get; internal set; }
         public Board Board { get; }
-        public SnakeBit Snake { get; private set; }
 
         public Game(Board board, Direction initialDirection, int? seed = null)
         {
             Board = board ?? throw new ArgumentNullException(nameof(board));
             _randomiser = new Random(seed ?? Environment.TickCount);
-            _lastDirection = initialDirection;
+            _currentDirection = initialDirection;
+            _pickupHandlers = new List<IItemPickupHandler>
+            {
+                new FoodPickupHandler(_randomiser),
+                new SpeedPickupHandler(),
+                new NegaPickupHandler()
+            };
 
             AddFood();
 
             var (x, y) = board.Bounds; 
 
-            AddSnake(x / 2, y / 2);
+            Snake = new SnakeBit(x / 2, y / 2, Snake);
         }
 
         private void AddFood()
         {
             var empty = Board.GetEmpty().ToList();
-            var (x, y) = empty[_randomiser.Next(0, empty.Count)];
 
-            Board.Update(x, y, Board.Food);
-        }
+            if (empty.Count > 0)
+            {
+                var (x, y) = empty[_randomiser.Next(0, empty.Count)];
 
-        private void AddSnake(int x, int y)
-        {
-            Snake = new SnakeBit(x, y, Snake);
+                Board.Update(x, y, Board.Food);
+            }
         }
 
         private void UpdateSnake(int x, int y)
@@ -85,13 +93,13 @@ namespace Snake
             switch (direction)
             {
                 case Direction.Left:
-                    return _lastDirection == Direction.Right && Snake.Count() > 1 ? _lastDirection : direction;
+                    return _currentDirection == Direction.Right && Snake.Count() > 1 ? _currentDirection : direction;
                 case Direction.Up:
-                    return _lastDirection == Direction.Down && Snake.Count() > 1 ? _lastDirection : direction;
+                    return _currentDirection == Direction.Down && Snake.Count() > 1 ? _currentDirection : direction;
                 case Direction.Right:
-                    return _lastDirection == Direction.Left && Snake.Count() > 1 ? _lastDirection : direction;
+                    return _currentDirection == Direction.Left && Snake.Count() > 1 ? _currentDirection : direction;
                 case Direction.Down:
-                    return _lastDirection == Direction.Up && Snake.Count() > 1 ? _lastDirection : direction;
+                    return _currentDirection == Direction.Up && Snake.Count() > 1 ? _currentDirection : direction;
                 default:
                     throw new NotSupportedException(direction.ToString());
             }
@@ -99,13 +107,13 @@ namespace Snake
 
         public bool Move(Direction direction)
         {
-            direction = AlterDirectionIfRequired(direction);
+            _currentDirection = AlterDirectionIfRequired(direction);
 
             // find front of snake,
             var headPos = Snake.GetHeadPosition();
 
             // look to one space ahead (in the right direction)
-            var (nextX, nextY) = GetNextPos(headPos, direction);
+            var (nextX, nextY) = GetNextPos(headPos, _currentDirection);
 
             var (xBound, yBound) = Board.Bounds;
 
@@ -123,18 +131,19 @@ namespace Snake
                 return false;
             }
 
-            // get the tail pos so we know where to add the new snake bit to
-            var (tailX, tailY) = Snake.Position;
-
             // move the snake
             UpdateSnake(nextX, nextY);
 
             // if we've just eaten food, add a bit to the back
             // and replace the food
-            if (nextValue == Board.Food)
+            if (nextValue != Board.Empty)
             {
-                Score++;
-                AddSnake(tailX, tailY);
+                var handler = _pickupHandlers.FirstOrDefault(h => h.Item == nextValue);
+
+                if (handler != null && handler.HandleItem(this, (nextX, nextY)))
+                {
+                    // raise event
+                }
             }
 
             if (Board.GetFoodPosition() == (-1, -1))
@@ -142,7 +151,6 @@ namespace Snake
                 AddFood();
             }
 
-            _lastDirection = direction;
             return true;
         }
     }

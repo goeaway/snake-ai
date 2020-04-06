@@ -2,10 +2,17 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Snake
+namespace Snake.Abstractions
 {
+    public struct OnGameAlteredEventArgs
+    {
+
+    }
+
     public interface IController
     {
+        event EventHandler<OnGameAlteredEventArgs> OnGameAltered;
+
         ConsoleColor Color { get; }
         Game CurrentGame { get; }
         string Id { get; }

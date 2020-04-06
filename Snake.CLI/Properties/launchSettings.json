@@ -2,7 +2,7 @@
   "profiles": {
     "Snake.CLI": {
       "commandName": "Project",
-      "commandLineArgs": "-p 1 -a 1 -d Hard"
+      "commandLineArgs": "-p 1"
     }
   }
 }

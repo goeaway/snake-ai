@@ -1,13 +1,13 @@
-﻿using System;
+﻿using Snake.Abstractions;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
 
 namespace Snake.CLI
 {
     public class GameManager
     {
+        private const int REFRESH_RATE_MILLISECONDS = 50;
         private readonly IEnumerable<IController> _controllers;
 
         public GameManager(IEnumerable<IController> controllers)
@@ -27,7 +27,7 @@ namespace Snake.CLI
             }
         }
 
-        public int Play(int refreshRate, CancellationToken cancelToken)
+        public int Play(CancellationToken cancelToken)
         {
             // while not cancelled and no winner?
             while (!cancelToken.IsCancellationRequested)
@@ -43,7 +43,7 @@ namespace Snake.CLI
                 }
 
                 PrintControllers();
-                Thread.Sleep(refreshRate);
+                Thread.Sleep(REFRESH_RATE_MILLISECONDS);
             }
 
             return 0;

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Snake
+namespace Snake.Abstractions
 {
     public interface IGameFactory
     {

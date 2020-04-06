@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Snake.Abstractions;
+using System;
 
 namespace Snake.Players
 {
@@ -11,6 +12,8 @@ namespace Snake.Players
         private readonly ConsoleKey _down;
         private readonly ConsoleKey _left;
         private readonly IGameFactory _gameFactory;
+
+        public event EventHandler<OnGameAlteredEventArgs> OnGameAltered;
 
         public string Id { get; }
 

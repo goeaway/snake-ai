@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Snake.Abstractions;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -13,6 +14,8 @@ namespace Snake.AI
         private readonly IGameFactory _gameFactory;
         private List<(int X, int Y)> _hamiltonPath;
         private int _index;
+
+        public event EventHandler<OnGameAlteredEventArgs> OnGameAltered;
 
         public string Id { get; }
 

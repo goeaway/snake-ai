@@ -2,8 +2,10 @@
 using System.Collections.Generic;
  using System.Threading;
  using CommandLine;
- using Snake.AI;
- using Snake.Players;
+using Snake.Abstractions;
+using Snake.AI;
+using Snake.Factories;
+using Snake.Players;
 
 namespace Snake.CLI
 {
@@ -29,25 +31,8 @@ namespace Snake.CLI
 
                 var gameManager = new GameManager(controllers);
 
-                gameManager.Play(GetRefreshRateForDifficulty(o.Difficulty), CancellationToken.None);
+                gameManager.Play(CancellationToken.None);
             });
-
-        private static int GetRefreshRateForDifficulty(Difficulty difficulty)
-        {
-            switch (difficulty)
-            {
-                case Difficulty.Easy:
-                    return 100;
-                case Difficulty.Medium:
-                    return 70;
-                case Difficulty.Hard:
-                    return 50;
-                case Difficulty.Supersonic:
-                    return 20;
-                default:
-                    throw new NotSupportedException(difficulty.ToString());
-            }
-        }
 
         private static PlayerOptions GetDefaultPlayerOptions(int index)
         {
