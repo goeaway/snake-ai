@@ -1,5 +1,7 @@
 ﻿ using System;
 using System.Collections.Generic;
+ using System.Linq;
+ using System.Net.NetworkInformation;
  using System.Threading;
  using CommandLine;
 using Snake.Abstractions;
@@ -15,86 +17,16 @@ namespace Snake.CLI
         static void Main(string[] args) => Parser.Default.ParseArguments<Options>(args)
             .WithParsed(o =>
             {
-                var startDirection = Direction.Right;
-
-                var controllers = new List<IController>();
-                var randomiser = new Random();
-
-                var pickupHandlers = new List<IItemPickupHandler>
-                {
-                    new FoodPickupHandler(randomiser),
-                    new SpeedPickupHandler(),
-                    new NegaPickupHandler(),
-                    new SuperPickupHandler(),
-                    new MoneyPickupHandler(),
-                    new RandomPickupHandler(randomiser)
-                };
-
-                var gameFactory = new GameFactory(40, 20, startDirection, randomiser, pickupHandlers);
-
-                for (var i = 0; i < o.Players; i++)
-                {
-                    controllers.Add(new PlayerController(GetDefaultPlayerOptions(i), gameFactory, startDirection));
-                }
-
-                for (var i = 0; i < o.AIPlayers; i++)
-                {
-                    controllers.Add(new AIController(GetDefaultAIOptions(i), gameFactory));
-                }
+                var gameFactory = new CountdownGameFactory(40, 20);
+                var controllers = GetControllers(o.Players, o.AIPlayers, gameFactory);
 
                 var gameManager = new GameManager(controllers);
-
                 gameManager.Play(CancellationToken.None);
             });
 
-        private static PlayerOptions GetDefaultPlayerOptions(int index)
-        {
-            switch (index)
-            {
-                case 0:
-                    return new PlayerOptions
-                    {
-                        Id = "Player 1",
-                        Color = ConsoleColor.Yellow,
-                        Up = ConsoleKey.UpArrow,
-                        Right = ConsoleKey.RightArrow,
-                        Down = ConsoleKey.DownArrow,
-                        Left = ConsoleKey.LeftArrow
-                    };
-                case 1:
-                    return new PlayerOptions
-                    {
-                        Id = "Player 2",
-                        Color = ConsoleColor.Cyan,
-                        Up = ConsoleKey.W,
-                        Right = ConsoleKey.D,
-                        Down = ConsoleKey.S,
-                        Left = ConsoleKey.A
-                    };
-                default:
-                    throw new NotSupportedException("only 2 players supported");
-            }
-        }
-
-        private static AIOptions GetDefaultAIOptions(int index)
-        {
-            switch (index)
-            {
-                case 0:
-                    return new AIOptions
-                    {
-                        Id = "AI",
-                        Color = ConsoleColor.Red,
-                    };
-                case 1:
-                    return new AIOptions
-                    {
-                        Id = "AI",
-                        Color = ConsoleColor.Green,
-                    };
-                default:
-                    throw new NotSupportedException("only 2 players supported");
-            }
-        }
+        private static IEnumerable<IController> GetControllers(uint playerCount, uint aiCount, IGameFactory gameFactory)
+            => new List<IController>()
+                .Concat(Enumerable.Range(0, (int)playerCount).Select(i => new PlayerController(PlayerOptions.GetDefault(i), gameFactory)))
+                .Concat(Enumerable.Range(0, (int)aiCount).Select(i => new AIController(AIOptions.GetDefault(i), gameFactory)));
     }
 }

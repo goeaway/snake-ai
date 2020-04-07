@@ -18,26 +18,29 @@ namespace Snake.ItemPickupHandlers
             _randomiser = randomiser;
         }
 
-        public string Item => Consts.Items.Food;
+        public char Item => BoardPiece.Food;
 
-        public bool HandleItem(Game game, (int X, int Y) pos)
+        public bool HandleItem(Game game, (int X, int Y) pos, out char item)
         {
             game.Score++;
             var (tX, tY) = game.Snake.Position;
             game.Snake = new SnakeBit(tX, tY, game.Snake);
 
-            // occaisionally add a new item to the board
-            if (_randomiser.Next(0, 5) == 1)
+            // occasionally add a new item to the board
+            if (_randomiser.Next(0, 10) == 1)
             {
                 var empty = game.Board.GetEmpty().ToList();
-                var (x, y) = empty[_randomiser.Next(0, empty.Count)];
 
-                game.Board.Update(x, y,
-                    game.PickupHandlers
-                        .Where(p => p.Item != Consts.Items.Food)
-                        .ToList()[_randomiser.Next(0, game.PickupHandlers.Count() - 1)].Item
-                );
+                if (empty.Count != 0)
+                {
+                    var (x, y) = empty[_randomiser.Next(0, empty.Count)];
+
+                    game.Board.Update(x, y,
+                        game.ItemsUsed.Where(i => i != BoardPiece.Food).ToList()[_randomiser.Next(0, game.ItemsUsed.Count() - 1)]);
+                }
             }
+
+            item = Item;
             // this item has no effect on other players
             return false;
         }

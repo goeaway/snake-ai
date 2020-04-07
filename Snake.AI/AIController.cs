@@ -101,7 +101,7 @@ namespace Snake.AI
 
         public void Reset()
         {
-            CurrentGame = _gameFactory.CreateGame();
+            CurrentGame = _gameFactory.CreateGame(this);
             _hamiltonPath = RoutingEngine.HamiltonianCycle(CurrentGame.Board.ToMultiArray());
         }
     }

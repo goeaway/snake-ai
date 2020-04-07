@@ -8,22 +8,24 @@ namespace Snake.ItemPickupHandlers
 {
     public class RandomPickupHandler : IItemPickupHandler
     {
-        public string Item => Consts.Items.Random;
+        public char Item => BoardPiece.Random;
 
         private readonly Random _randomiser;
+        private readonly IEnumerable<IItemPickupHandler> _pickupHandlers;
 
-        public RandomPickupHandler(Random randomiser)
+        public RandomPickupHandler(Random randomiser, IEnumerable<IItemPickupHandler> pickupHandlers)
         {
             _randomiser = randomiser;
+            _pickupHandlers = pickupHandlers;
         }
 
-        public bool HandleItem(Game game, (int X, int Y) pos)
+        public bool HandleItem(Game game, (int X, int Y) pos, out char item)
         {
             // pick a random handler and do that
-            return game.PickupHandlers
-                .Where(h => h.Item != Consts.Items.Food)
-                .ToList()[_randomiser.Next(0, game.PickupHandlers.Count - 2)]
-                .HandleItem(game, pos);
+            return _pickupHandlers
+                .Where(h => h.Item != BoardPiece.Food && h.Item != Item)
+                .ToList()[_randomiser.Next(0, _pickupHandlers.Count() - 3)]
+                .HandleItem(game, pos, out item);
         }
     }
 }

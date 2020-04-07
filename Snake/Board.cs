@@ -6,7 +6,7 @@ namespace Snake
 {
     public class Board
     {
-        private readonly string[,] _board;
+        private readonly char[,] _board;
 
         public (int X, int Y) Bounds { get; }
 
@@ -15,18 +15,18 @@ namespace Snake
         public Board(int xSize, int ySize)
         {
             Bounds = (xSize, ySize);
-            _board = new string[ySize,xSize];
+            _board = new char[ySize,xSize];
 
             for (var yDim = 0; yDim < ySize; yDim++)
             {
                 for (var xDim = 0; xDim < xSize; xDim++)
                 {
-                    _board[yDim, xDim] = Consts.Items.Empty;
+                    _board[yDim, xDim] = BoardPiece.Empty;
                 }
             }
         }
 
-        public void Update(int x, int y, string value)
+        public void Update(int x, int y, char value)
         {
             var (xBound, yBound) = Bounds;
 
@@ -42,23 +42,23 @@ namespace Snake
             }
         }
 
-        public void Remove(string value)
+        public void Remove(char value)
         {
             var (xBound, yBound) = Bounds;
 
-            for (var yDim = 0; yDim < Bounds.Item2; yDim++)
+            for (var yDim = 0; yDim < Bounds.Y; yDim++)
             {
-                for (var xDim = 0; xDim < Bounds.Item1; xDim++)
+                for (var xDim = 0; xDim < Bounds.X; xDim++)
                 {
                     if (_board[yDim, xDim] == value)
                     {
-                        _board[yDim, xDim] = Consts.Items.Empty;
+                        _board[yDim, xDim] = BoardPiece.Empty;
                     }
                 }
             }
         }
 
-        public string GetValue(int x, int y)
+        public char GetValue(int x, int y)
         {
             var (xBound, yBound) = Bounds;
             if (x < 0 || x >= xBound)
@@ -71,9 +71,9 @@ namespace Snake
                 throw new ArgumentOutOfRangeException(nameof(y));
             }
 
-            for (var yDim = 0; yDim < Bounds.Item2; yDim++)
+            for (var yDim = 0; yDim < Bounds.Y; yDim++)
             {
-                for (var xDim = 0; xDim < Bounds.Item1; xDim++)
+                for (var xDim = 0; xDim < Bounds.X; xDim++)
                 {
                     if (yDim == y && xDim == x)
                     {
@@ -82,7 +82,7 @@ namespace Snake
                 }
             }
 
-            return Consts.Items.Empty;
+            return BoardPiece.Empty;
         }
 
         public (int X, int Y) GetFoodPosition()
@@ -93,7 +93,7 @@ namespace Snake
             {
                 for (var xDim = 0; xDim < Bounds.X; xDim++)
                 {
-                    if (_board[yDim, xDim] == Consts.Items.Food)
+                    if (_board[yDim, xDim] == BoardPiece.Food)
                     {
                         return (xDim, yDim);
                     }
@@ -116,7 +116,7 @@ namespace Snake
             {
                 for (var xDim = 0; xDim < Bounds.X; xDim++)
                 {
-                    if (_board[yDim, xDim] == Consts.Items.Empty || (foodCountsAsEmpty && _board[yDim, xDim] == Consts.Items.Food))
+                    if (_board[yDim, xDim] == BoardPiece.Empty || (foodCountsAsEmpty && _board[yDim, xDim] == BoardPiece.Food))
                     {
                         yield return (xDim, yDim);
                     }
@@ -173,7 +173,7 @@ namespace Snake
             return result;
         }
 
-        public string[,] ToMultiArray()
+        public char[,] ToMultiArray()
         {
             return _board;
         }

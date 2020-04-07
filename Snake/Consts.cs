@@ -4,18 +4,19 @@ using System.Text;
 
 namespace Snake
 {
+    public static class BoardPiece
+    {
+        public const char Empty = ' ';
+        public const char Food = '+';
+        public const char Snake = '0';
+        public const char Nega = '-';
+        public const char Speed = ')';
+        public const char Money = '$';
+        public const char Super = '^';
+        public const char Random = '?';
+    }
+
     public static class Consts
     {
-        public static class Items
-        {
-            public const string Empty = " ";
-            public const string Food = "+";
-            public const string Snake = "0";
-            public const string Nega = "-";
-            public const string Speed = ")";
-            public const string Money = "$";
-            public const string Super = "^";
-            public const string Random = "?";
-        }
     }
 }

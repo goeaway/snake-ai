@@ -10,7 +10,9 @@ namespace Snake
 {
     public struct OnGameAlteredEventArgs
     {
-        public string Item { get; set; }
+        public char Item { get; set; }
+        public (int X, int Y) Position { get; set; }
+        public IController Controller { get; set; }
     }
 
     public class Game
@@ -18,26 +20,27 @@ namespace Snake
         public event EventHandler<OnGameAlteredEventArgs> OnGameAltered;
 
         private readonly Random _randomiser;
+        private readonly IController _controller;
 
         private Direction _currentDirection;
         private IEnumerable<IItemPickupHandler> _pickupHandlers;
 
-        internal IReadOnlyCollection<IItemPickupHandler> PickupHandlers => _pickupHandlers.ToImmutableArray();
+        public IReadOnlyCollection<char> ItemsUsed => _pickupHandlers.Select(h => h.Item).ToImmutableArray();
         public int Score { get; internal set; }
         public SnakeBit Snake { get; internal set; }
         public Board Board { get; }
 
         public Game(
+            IController controller,
             Board board, 
-            Direction initialDirection, 
             Random randomiser, 
-            IEnumerable<IItemPickupHandler> pickupHandlers, 
-            int? seed = null)
+            IEnumerable<IItemPickupHandler> pickupHandlers)
         {
             Board = board ?? throw new ArgumentNullException(nameof(board));
-            _randomiser = new Random(seed ?? Environment.TickCount);
-            _currentDirection = initialDirection;
-            _pickupHandlers = pickupHandlers ?? throw new ArgumentNullException(nameof(pickupHandlers)); 
+            _controller = controller ?? throw new ArgumentNullException(nameof(controller));
+            _randomiser = randomiser;
+            _pickupHandlers = pickupHandlers ?? throw new ArgumentNullException(nameof(pickupHandlers));
+            OnGameAltered += (_, e) => { };
 
             AddFood();
 
@@ -54,7 +57,7 @@ namespace Snake
             {
                 var (x, y) = empty[_randomiser.Next(0, empty.Count)];
 
-                Board.Update(x, y, Consts.Items.Food);
+                Board.Update(x, y, BoardPiece.Food);
             }
         }
 
@@ -74,8 +77,8 @@ namespace Snake
                 Snake.GetHead().Head = new SnakeBit(x, y, null);
             }
 
-            Board.Update(x, y, Consts.Items.Snake);
-            Board.Update(remX, remY, Consts.Items.Empty);
+            Board.Update(x, y, BoardPiece.Snake);
+            Board.Update(remX, remY, BoardPiece.Empty);
         }
 
         private (int, int) GetNextPos((int, int) currentPosition, Direction direction)
@@ -133,7 +136,7 @@ namespace Snake
             var nextValue = Board.GetValue(nextX, nextY);
 
             // if that space value is 1, return false (died)
-            if (nextValue == Consts.Items.Snake)
+            if (nextValue == BoardPiece.Snake)
             {
                 return false;
             }
@@ -143,14 +146,14 @@ namespace Snake
 
             // if we've just eaten food, add a bit to the back
             // and replace the food
-            if (nextValue != Consts.Items.Empty)
+            if (nextValue != BoardPiece.Empty)
             {
                 var handler = _pickupHandlers.FirstOrDefault(h => h.Item == nextValue);
 
-                if (handler != null && handler.HandleItem(this, (nextX, nextY)))
+                if (handler != null && handler.HandleItem(this, (nextX, nextY), out var item))
                 {
                     // raise event
-                    OnGameAltered(this, new OnGameAlteredEventArgs { Item = nextValue });
+                    OnGameAltered(this, new OnGameAlteredEventArgs { Item = item, Position = (nextX, nextY), Controller = _controller });
                 }
             }
 
@@ -160,6 +163,18 @@ namespace Snake
             }
 
             return true;
+        }
+
+        public void ReactToItem(char item, (int X, int Y) pos)
+        {
+            foreach (var handler in _pickupHandlers)
+            {
+                if (handler is IItemPickupReactionHandler && handler.Item == item)
+                {
+                    (handler as IItemPickupReactionHandler).ReactToItem(this, pos);
+                    break;
+                }
+            }
         }
     }
 }

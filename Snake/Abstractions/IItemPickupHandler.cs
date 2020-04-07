@@ -12,13 +12,14 @@ namespace Snake.Abstractions
         /// <summary>
         /// Gets the item this handler handles
         /// </summary>
-        string Item { get; }
+        char Item { get; }
         /// <summary>
         /// Alters the game as a result of the snake eating the item. Returns true if an event should be fired
         /// </summary>
         /// <param name="game"></param>
         /// <param name="pos"></param>
         /// <returns></returns>
-        bool HandleItem(Game game, (int X, int Y) pos);
+        bool HandleItem(Game game, (int X, int Y) pos, out char item);
+        
     }
 }

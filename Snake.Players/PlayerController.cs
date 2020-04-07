@@ -21,8 +21,7 @@ namespace Snake.Players
 
         public PlayerController(
             PlayerOptions options,
-            IGameFactory gameFactory,
-            Direction startDirection)
+            IGameFactory gameFactory)
         {
             Id = options.Id;
             Color = options.Color;
@@ -30,7 +29,6 @@ namespace Snake.Players
             _right = options.Right;
             _down = options.Down;
             _left = options.Left;
-            _direction = startDirection;
             _gameFactory = gameFactory;
 
             Reset();
@@ -66,7 +64,7 @@ namespace Snake.Players
 
         public void Reset()
         {
-            CurrentGame = _gameFactory.CreateGame();
+            CurrentGame = _gameFactory.CreateGame(this);
         }
     }
 }

@@ -7,11 +7,12 @@ namespace Snake.ItemPickupHandlers
 {
     public class MoneyPickupHandler : IItemPickupHandler
     {
-        public string Item => Consts.Items.Money;
+        public char Item => BoardPiece.Money;
 
-        public bool HandleItem(Game game, (int X, int Y) pos)
+        public bool HandleItem(Game game, (int X, int Y) pos, out char item)
         {
             game.Score += 4;
+            item = Item;
             return false;
         }
     }

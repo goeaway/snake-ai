@@ -1,6 +1,7 @@
 ﻿using Snake.Abstractions;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 
 namespace Snake.CLI
@@ -13,6 +14,21 @@ namespace Snake.CLI
         public GameManager(IEnumerable<IController> controllers)
         {
             _controllers = controllers ?? throw new ArgumentNullException(nameof(controllers));
+
+            foreach (var controller in _controllers)
+            {
+                controller.CurrentGame.OnGameAltered += OnGameAlteredHandler;
+            }
+        }
+
+        private void OnGameAlteredHandler(object sender, OnGameAlteredEventArgs e)
+        {
+            // find all the controllers that didn't trigger this e.Controller
+            // make them act on the item being added
+            foreach(var controller in _controllers.Where(c => c != e.Controller))
+            {
+                controller.CurrentGame.ReactToOtherGameItem(e.Item, e.Position);
+            }
         }
 
         private void PrintControllers()
@@ -38,7 +54,9 @@ namespace Snake.CLI
                     var result = controller.Act();
                     if (!result)
                     {
+                        controller.CurrentGame.OnGameAltered -= OnGameAlteredHandler;
                         controller.Reset();
+                        controller.CurrentGame.OnGameAltered += OnGameAlteredHandler;
                     }
                 }
 

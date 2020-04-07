@@ -6,6 +6,6 @@ namespace Snake.Abstractions
 {
     public interface IGameFactory
     {
-        Game CreateGame();
+        Game CreateGame(IController controller);
     }
 }

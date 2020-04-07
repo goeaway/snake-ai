@@ -10,9 +10,9 @@ namespace Snake.ItemPickupHandlers
     /// </summary>
     public class NegaPickupHandler : IItemPickupHandler
     {
-        public string Item => Consts.Items.Nega;
+        public char Item => BoardPiece.Nega;
 
-        public bool HandleItem(Game game, (int X, int Y) pos)
+        public bool HandleItem(Game game, (int X, int Y) pos, out char item)
         {
             game.Score++;
 
@@ -20,8 +20,10 @@ namespace Snake.ItemPickupHandlers
             {
                 var (remX, remY) = game.Snake.Position;
                 game.Snake = game.Snake.Head;
-                game.Board.Update(remX,remY,Consts.Items.Empty);
+                game.Board.Update(remX,remY,BoardPiece.Empty);
             }
+
+            item = Item;
             // this item has no effect on other players
             return false;
         }

@@ -8,15 +8,19 @@ namespace Snake.ItemPickupHandlers
     /// <summary>
     /// Triggers an event to speed up other players on the board
     /// </summary>
-    public class SpeedPickupHandler : IItemPickupHandler
+    public class SpeedPickupHandler : IItemPickupHandler, IItemPickupReactionHandler
     {
-        public string Item => Consts.Items.Speed;
+        public char Item => BoardPiece.Speed;
 
-        public bool HandleItem(Game game, (int X, int Y) pos)
+        public bool HandleItem(Game game, (int X, int Y) pos, out char item)
         {
-            // alter the game board or snake
-            // return whether you changed anything
+            item = Item;
             return true;
+        }
+
+        public void ReactToItem(Game game, (int X, int Y) pos)
+        {
+            throw new NotImplementedException();
         }
     }
 }

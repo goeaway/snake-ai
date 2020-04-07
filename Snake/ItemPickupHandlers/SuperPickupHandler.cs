@@ -8,23 +8,22 @@ namespace Snake.ItemPickupHandlers
 {
     public class SuperPickupHandler : IItemPickupHandler
     {
-        public string Item => Consts.Items.Super;
+        public char Item => BoardPiece.Super;
 
-        public bool HandleItem(Game game, (int X, int Y) pos)
+        public bool HandleItem(Game game, (int X, int Y) pos, out char item)
         {
             game.Score += 10;
 
-            var positionsToRemove = game.Snake.GetPositions();
+            // remove all but the head position (last in the array)
+            foreach (var (remX, remY) in game.Snake.GetPositions())
+            {
+                game.Board.Update(remX, remY, BoardPiece.Empty);
+            }
 
             // add score and reduce this snake to its head only
             game.Snake = game.Snake.GetHead();
 
-            // remove all but the head position (last in the array)
-            foreach (var (remX, remY) in positionsToRemove.Take(positionsToRemove.Count() - 1))
-            {
-                game.Board.Update(remX, remY, Consts.Items.Empty);
-            }
-
+            item = Item;
             return false;
         }
     }
