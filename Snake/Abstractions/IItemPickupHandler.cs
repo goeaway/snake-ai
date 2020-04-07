@@ -7,7 +7,7 @@ namespace Snake.Abstractions
     /// <summary>
     /// Handles the result of the snake eating a particular item on the board
     /// </summary>
-    internal interface IItemPickupHandler
+    public interface IItemPickupHandler
     {
         /// <summary>
         /// Gets the item this handler handles

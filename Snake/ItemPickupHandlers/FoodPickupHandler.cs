@@ -9,7 +9,7 @@ namespace Snake.ItemPickupHandlers
     /// <summary>
     /// Adds an extra <see cref="SnakeBit"/> to the end and increments the score
     /// </summary>
-    internal class FoodPickupHandler : IItemPickupHandler
+    public class FoodPickupHandler : IItemPickupHandler
     {
         private readonly Random _randomiser;
 

@@ -8,7 +8,7 @@ namespace Snake.ItemPickupHandlers
     /// <summary>
     /// Triggers an event to speed up other players on the board
     /// </summary>
-    internal class SpeedPickupHandler : IItemPickupHandler
+    public class SpeedPickupHandler : IItemPickupHandler
     {
         public string Item => Consts.Items.Speed;
 

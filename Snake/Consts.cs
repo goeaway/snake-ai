@@ -13,6 +13,9 @@ namespace Snake
             public const string Snake = "0";
             public const string Nega = "-";
             public const string Speed = ")";
+            public const string Money = "$";
+            public const string Super = "^";
+            public const string Random = "?";
         }
     }
 }

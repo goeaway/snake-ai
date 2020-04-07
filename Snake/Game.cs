@@ -27,17 +27,17 @@ namespace Snake
         public SnakeBit Snake { get; internal set; }
         public Board Board { get; }
 
-        public Game(Board board, Direction initialDirection, int? seed = null)
+        public Game(
+            Board board, 
+            Direction initialDirection, 
+            Random randomiser, 
+            IEnumerable<IItemPickupHandler> pickupHandlers, 
+            int? seed = null)
         {
             Board = board ?? throw new ArgumentNullException(nameof(board));
             _randomiser = new Random(seed ?? Environment.TickCount);
             _currentDirection = initialDirection;
-            _pickupHandlers = new List<IItemPickupHandler>
-            {
-                new FoodPickupHandler(_randomiser),
-                new SpeedPickupHandler(),
-                new NegaPickupHandler()
-            };
+            _pickupHandlers = pickupHandlers ?? throw new ArgumentNullException(nameof(pickupHandlers)); 
 
             AddFood();
 

@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using Snake.Abstractions;
 using Snake.AI;
 using Snake.Factories;
+using Snake.ItemPickupHandlers;
 using Snake.Players;
 
 namespace Snake.CLI
@@ -17,7 +18,19 @@ namespace Snake.CLI
                 var startDirection = Direction.Right;
 
                 var controllers = new List<IController>();
-                var gameFactory = new GameFactory(40, 20, startDirection);
+                var randomiser = new Random();
+
+                var pickupHandlers = new List<IItemPickupHandler>
+                {
+                    new FoodPickupHandler(randomiser),
+                    new SpeedPickupHandler(),
+                    new NegaPickupHandler(),
+                    new SuperPickupHandler(),
+                    new MoneyPickupHandler(),
+                    new RandomPickupHandler(randomiser)
+                };
+
+                var gameFactory = new GameFactory(40, 20, startDirection, randomiser, pickupHandlers);
 
                 for (var i = 0; i < o.Players; i++)
                 {
