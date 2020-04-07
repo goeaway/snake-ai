@@ -15,8 +15,6 @@ namespace Snake.AI
         private List<(int X, int Y)> _hamiltonPath;
         private int _index;
 
-        public event EventHandler<OnGameAlteredEventArgs> OnGameAltered;
-
         public string Id { get; }
 
         public Game CurrentGame { get; private set; }

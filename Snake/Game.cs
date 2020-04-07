@@ -8,8 +8,15 @@ using Snake.ItemPickupHandlers;
 
 namespace Snake
 {
+    public struct OnGameAlteredEventArgs
+    {
+        public string Item { get; set; }
+    }
+
     public class Game
     {
+        public event EventHandler<OnGameAlteredEventArgs> OnGameAltered;
+
         private readonly Random _randomiser;
 
         private Direction _currentDirection;
@@ -47,7 +54,7 @@ namespace Snake
             {
                 var (x, y) = empty[_randomiser.Next(0, empty.Count)];
 
-                Board.Update(x, y, Board.Food);
+                Board.Update(x, y, Consts.Items.Food);
             }
         }
 
@@ -67,8 +74,8 @@ namespace Snake
                 Snake.GetHead().Head = new SnakeBit(x, y, null);
             }
 
-            Board.Update(x, y, Board.Snake);
-            Board.Update(remX, remY, Board.Empty);
+            Board.Update(x, y, Consts.Items.Snake);
+            Board.Update(remX, remY, Consts.Items.Empty);
         }
 
         private (int, int) GetNextPos((int, int) currentPosition, Direction direction)
@@ -126,7 +133,7 @@ namespace Snake
             var nextValue = Board.GetValue(nextX, nextY);
 
             // if that space value is 1, return false (died)
-            if (nextValue == Board.Snake)
+            if (nextValue == Consts.Items.Snake)
             {
                 return false;
             }
@@ -136,13 +143,14 @@ namespace Snake
 
             // if we've just eaten food, add a bit to the back
             // and replace the food
-            if (nextValue != Board.Empty)
+            if (nextValue != Consts.Items.Empty)
             {
                 var handler = _pickupHandlers.FirstOrDefault(h => h.Item == nextValue);
 
                 if (handler != null && handler.HandleItem(this, (nextX, nextY)))
                 {
                     // raise event
+                    OnGameAltered(this, new OnGameAlteredEventArgs { Item = nextValue });
                 }
             }
 

@@ -12,9 +12,7 @@ namespace Snake.Players
         private readonly ConsoleKey _down;
         private readonly ConsoleKey _left;
         private readonly IGameFactory _gameFactory;
-
-        public event EventHandler<OnGameAlteredEventArgs> OnGameAltered;
-
+        
         public string Id { get; }
 
         public Game CurrentGame { get; private set; }

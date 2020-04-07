@@ -6,10 +6,6 @@ namespace Snake
 {
     public class Board
     {
-        public const string Empty = " ";
-        public const string Snake = "0";
-        public const string Food = "+";
-
         private readonly string[,] _board;
 
         public (int X, int Y) Bounds { get; }
@@ -25,7 +21,7 @@ namespace Snake
             {
                 for (var xDim = 0; xDim < xSize; xDim++)
                 {
-                    _board[yDim, xDim] = Empty;
+                    _board[yDim, xDim] = Consts.Items.Empty;
                 }
             }
         }
@@ -56,7 +52,7 @@ namespace Snake
                 {
                     if (_board[yDim, xDim] == value)
                     {
-                        _board[yDim, xDim] = Board.Empty;
+                        _board[yDim, xDim] = Consts.Items.Empty;
                     }
                 }
             }
@@ -86,18 +82,18 @@ namespace Snake
                 }
             }
 
-            return Board.Empty;
+            return Consts.Items.Empty;
         }
 
         public (int X, int Y) GetFoodPosition()
         {
             var (xBound, yBound) = Bounds;
 
-            for (var yDim = 0; yDim < Bounds.Item2; yDim++)
+            for (var yDim = 0; yDim < Bounds.Y; yDim++)
             {
-                for (var xDim = 0; xDim < Bounds.Item1; xDim++)
+                for (var xDim = 0; xDim < Bounds.X; xDim++)
                 {
-                    if (_board[yDim, xDim] == Food)
+                    if (_board[yDim, xDim] == Consts.Items.Food)
                     {
                         return (xDim, yDim);
                     }
@@ -112,7 +108,7 @@ namespace Snake
             return GetEmpty(false);
         }
 
-        public IEnumerable<(int, int)> GetEmpty(bool itemCountsAsEmpty)
+        public IEnumerable<(int, int)> GetEmpty(bool foodCountsAsEmpty)
         {
             var (xBound, yBound) = Bounds;
 
@@ -120,7 +116,7 @@ namespace Snake
             {
                 for (var xDim = 0; xDim < Bounds.X; xDim++)
                 {
-                    if (_board[yDim, xDim] == Empty || (itemCountsAsEmpty && _board[yDim, xDim] == Food))
+                    if (_board[yDim, xDim] == Consts.Items.Empty || (foodCountsAsEmpty && _board[yDim, xDim] == Consts.Items.Food))
                     {
                         yield return (xDim, yDim);
                     }

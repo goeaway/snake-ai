@@ -6,6 +6,9 @@ using Snake.Abstractions;
 
 namespace Snake.ItemPickupHandlers
 {
+    /// <summary>
+    /// Adds an extra <see cref="SnakeBit"/> to the end and increments the score
+    /// </summary>
     internal class FoodPickupHandler : IItemPickupHandler
     {
         private readonly Random _randomiser;
@@ -15,7 +18,7 @@ namespace Snake.ItemPickupHandlers
             _randomiser = randomiser;
         }
 
-        public string Item => Board.Food;
+        public string Item => Consts.Items.Food;
 
         public bool HandleItem(Game game, (int X, int Y) pos)
         {
@@ -23,19 +26,20 @@ namespace Snake.ItemPickupHandlers
             var (tX, tY) = game.Snake.Position;
             game.Snake = new SnakeBit(tX, tY, game.Snake);
 
-            if (_randomiser.Next(0, 20) == 1)
+            // occaisionally add a new item to the board
+            if (_randomiser.Next(0, 5) == 1)
             {
                 var empty = game.Board.GetEmpty().ToList();
                 var (x, y) = empty[_randomiser.Next(0, empty.Count)];
 
                 game.Board.Update(x, y,
                     game.PickupHandlers
-                        .Where(p => p.Item != Board.Food)
+                        .Where(p => p.Item != Consts.Items.Food)
                         .ToList()[_randomiser.Next(0, game.PickupHandlers.Count() - 1)].Item
                 );
             }
-
-            return true;
+            // this item has no effect on other players
+            return false;
         }
     }
 }

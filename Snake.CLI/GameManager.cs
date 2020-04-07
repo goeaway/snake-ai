@@ -7,7 +7,7 @@ namespace Snake.CLI
 {
     public class GameManager
     {
-        private const int REFRESH_RATE_MILLISECONDS = 50;
+        private const int REFRESH_RATE_MILLISECONDS = 80;
         private readonly IEnumerable<IController> _controllers;
 
         public GameManager(IEnumerable<IController> controllers)

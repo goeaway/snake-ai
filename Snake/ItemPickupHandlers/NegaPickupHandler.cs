@@ -5,9 +5,12 @@ using Snake.Abstractions;
 
 namespace Snake.ItemPickupHandlers
 {
+    /// <summary>
+    /// Removes tail of snake but increments score
+    /// </summary>
     public class NegaPickupHandler : IItemPickupHandler
     {
-        public string Item => "-";
+        public string Item => Consts.Items.Nega;
 
         public bool HandleItem(Game game, (int X, int Y) pos)
         {
@@ -15,10 +18,12 @@ namespace Snake.ItemPickupHandlers
 
             if (game.Snake.Head != null)
             {
+                var (remX, remY) = game.Snake.Position;
                 game.Snake = game.Snake.Head;
+                game.Board.Update(remX,remY,Consts.Items.Empty);
             }
-
-            return true;
+            // this item has no effect on other players
+            return false;
         }
     }
 }

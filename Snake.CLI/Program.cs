@@ -17,7 +17,7 @@ namespace Snake.CLI
                 var startDirection = Direction.Right;
 
                 var controllers = new List<IController>();
-                var gameFactory = new GameFactory(40, 20, startDirection, 1);
+                var gameFactory = new GameFactory(40, 20, startDirection);
 
                 for (var i = 0; i < o.Players; i++)
                 {
