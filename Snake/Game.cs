@@ -13,17 +13,31 @@ namespace Snake
         public IController Controller { get; set; }
     }
 
+    public struct FiniteItem
+    {
+        public char Item { get; set; }
+        public (int X, int Y) Position { get; set; }
+        public int TTL { get; set; }
+    }
+
     public class Game
     {
         public event EventHandler<OnGameAlteredEventArgs> OnGameAltered;
 
         private readonly Random _randomiser;
         private readonly IController _controller;
+        private readonly IList<FiniteItem> _finiteItems;
 
         private Direction _currentDirection;
         private IEnumerable<IItemPickupHandler> _pickupHandlers;
 
         public IReadOnlyCollection<char> ItemsUsed => _pickupHandlers.Select(h => h.Item).ToImmutableArray();
+
+        // collection to push pos,value,and ticks
+        // every time we move, the ticks for each item is reduced by 1
+        // any that have reached zero are checked, if the value is still there
+        // we reset to empty and then remove from the collection
+
         public int Score { get; internal set; }
         public SnakeBit Snake { get; internal set; }
         public Board Board { get; }
@@ -45,6 +59,8 @@ namespace Snake
             var (x, y) = board.Bounds; 
 
             Snake = new SnakeBit(x / 2, y / 2, Snake);
+
+            _finiteItems = new List<FiniteItem>();
         }
 
         private void AddFood()
@@ -149,7 +165,7 @@ namespace Snake
             {
                 var handler = _pickupHandlers.FirstOrDefault(h => h.Item == nextValue);
 
-                if (handler != null && handler.PickupItem(this, (nextX, nextY), out var item))
+                if (handler != null && handler.PickupItem(this, (nextX, nextY), _randomiser, out var item))
                 {
                     // raise event
                     OnGameAltered(this, new OnGameAlteredEventArgs { Item = item, Position = (nextX, nextY), Controller = _controller });
@@ -170,7 +186,7 @@ namespace Snake
             {
                 if (handler is IItemReactionHandler && handler.Item == item)
                 {
-                    (handler as IItemReactionHandler).ReactToItem(this, pos);
+                    (handler as IItemReactionHandler).ReactToItem(this, pos, _finiteItems, _randomiser);
                     break;
                 }
             }

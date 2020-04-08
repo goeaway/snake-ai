@@ -11,6 +11,6 @@ namespace Snake.Abstractions
         /// </summary>
         /// <param name="game"></param>
         /// <param name="pos"></param>
-        void ReactToItem(Game game, (int X, int Y) pos);
+        void ReactToItem(Game game, (int X, int Y) pos, IList<FiniteItem> finiteItems, Random random);
     }
 }

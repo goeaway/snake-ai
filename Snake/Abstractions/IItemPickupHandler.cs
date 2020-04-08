@@ -19,7 +19,6 @@ namespace Snake.Abstractions
         /// <param name="game"></param>
         /// <param name="pos"></param>
         /// <returns></returns>
-        bool PickupItem(Game game, (int X, int Y) pos, out char item);
-        
+        bool PickupItem(Game game, (int X, int Y) pos, Random random, out char item);
     }
 }

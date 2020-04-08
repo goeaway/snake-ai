@@ -12,7 +12,7 @@ namespace Snake.ItemHandlers
     {
         public char Item => BoardPiece.Nega;
 
-        public bool PickupItem(Game game, (int X, int Y) pos, out char item)
+        public bool PickupItem(Game game, (int X, int Y) pos, Random random, out char item)
         {
             game.Score++;
 

@@ -11,32 +11,23 @@ namespace Snake.ItemHandlers
     /// </summary>
     public class FoodHandler : IItemPickupHandler
     {
-        private readonly Random _randomiser;
-
-        public FoodHandler(Random randomiser)
-        {
-            _randomiser = randomiser;
-        }
-
         public char Item => BoardPiece.Food;
 
-        public bool PickupItem(Game game, (int X, int Y) pos, out char item)
+        public bool PickupItem(Game game, (int X, int Y) pos, Random random, out char item)
         {
             game.Score++;
             var (tX, tY) = game.Snake.Position;
             game.Snake = new SnakeBit(tX, tY, game.Snake);
 
             // occasionally add a new item to the board
-            if (_randomiser.Next(0, 10) == 1)
+            if (random.Next(0, 10) == 1)
             {
-                var empty = game.Board.GetEmpty().ToList();
+                var randomPos = game.Board.GetRandomEmptyPosition(random);
 
-                if (empty.Count != 0)
+                if (randomPos != (-1, -1))
                 {
-                    var (x, y) = empty[_randomiser.Next(0, empty.Count)];
-
-                    game.Board.Update(x, y,
-                        game.ItemsUsed.Where(i => i != BoardPiece.Food).ToList()[_randomiser.Next(0, game.ItemsUsed.Count() - 1)]);
+                    game.Board.Update(randomPos.X, randomPos.Y,
+                        game.ItemsUsed.Where(i => i != BoardPiece.Food).ToList()[random.Next(0, game.ItemsUsed.Count() - 1)]);
                 }
             }
 

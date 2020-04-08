@@ -12,13 +12,13 @@ namespace Snake.ItemHandlers
     {
         public char Item => BoardPiece.Speed;
 
-        public bool PickupItem(Game game, (int X, int Y) pos, out char item)
+        public bool PickupItem(Game game, (int X, int Y) pos, Random random, out char item)
         {
             item = Item;
             return true;
         }
 
-        public void ReactToItem(Game game, (int X, int Y) pos)
+        public void ReactToItem(Game game, (int X, int Y) pos, IList<FiniteItem> finiteItems, Random random)
         {
             throw new NotImplementedException();
         }

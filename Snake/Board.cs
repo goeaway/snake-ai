@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Snake
@@ -122,6 +123,23 @@ namespace Snake
                     }
                 }
             }
+        }
+
+        public (int X, int Y) GetRandomEmptyPosition(Random random)
+        {
+            if (random == null)
+            {
+                throw new ArgumentNullException(nameof(random));
+            }
+
+            var empty = GetEmpty().ToList();
+
+            if (empty.Count > 0)
+            {
+                return empty[random.Next(0, empty.Count)];
+            }
+
+            return (-1, -1);
         }
 
         public override string ToString()
