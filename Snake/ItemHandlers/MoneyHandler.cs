@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Text;
 using Snake.Abstractions;
 
-namespace Snake.ItemPickupHandlers
+namespace Snake.ItemHandlers
 {
-    public class MoneyPickupHandler : IItemPickupHandler
+    public class MoneyHandler : IItemPickupHandler
     {
         public char Item => BoardPiece.Money;
 
-        public bool HandleItem(Game game, (int X, int Y) pos, out char item)
+        public bool PickupItem(Game game, (int X, int Y) pos, out char item)
         {
             game.Score += 4;
             item = Item;

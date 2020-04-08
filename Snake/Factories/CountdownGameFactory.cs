@@ -20,14 +20,14 @@ namespace Snake.Factories
             _random = new Random(seed.HasValue ? seed.Value : Environment.TickCount);
             _pickupHandlers = new List<IItemPickupHandler>
             {
-                new FoodPickupHandler(_random),
-                new SpeedPickupHandler(),
-                new NegaPickupHandler(),
-                new SuperPickupHandler(),
-                new MoneyPickupHandler()
+                new FoodHandler(_random),
+                new SpeedHandler(),
+                new NegaHandler(),
+                new SuperHandler(),
+                new MoneyHandler()
             };
 
-            _pickupHandlers.Add(new RandomPickupHandler(_random, _pickupHandlers)); ;
+            _pickupHandlers.Add(new RandomHandler(_random, _pickupHandlers)); ;
         }
 
         public Game CreateGame(IController controller) => new Game(controller, new Board(_boardX, _boardY), _random, _pickupHandlers);

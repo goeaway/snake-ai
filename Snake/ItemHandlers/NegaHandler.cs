@@ -3,16 +3,16 @@ using System.Collections.Generic;
 using System.Text;
 using Snake.Abstractions;
 
-namespace Snake.ItemPickupHandlers
+namespace Snake.ItemHandlers
 {
     /// <summary>
     /// Removes tail of snake but increments score
     /// </summary>
-    public class NegaPickupHandler : IItemPickupHandler
+    public class NegaHandler : IItemPickupHandler
     {
         public char Item => BoardPiece.Nega;
 
-        public bool HandleItem(Game game, (int X, int Y) pos, out char item)
+        public bool PickupItem(Game game, (int X, int Y) pos, out char item)
         {
             game.Score++;
 

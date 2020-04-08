@@ -4,23 +4,23 @@ using System.Linq;
 using System.Text;
 using Snake.Abstractions;
 
-namespace Snake.ItemPickupHandlers
+namespace Snake.ItemHandlers
 {
     /// <summary>
     /// Adds an extra <see cref="SnakeBit"/> to the end and increments the score
     /// </summary>
-    public class FoodPickupHandler : IItemPickupHandler
+    public class FoodHandler : IItemPickupHandler
     {
         private readonly Random _randomiser;
 
-        public FoodPickupHandler(Random randomiser)
+        public FoodHandler(Random randomiser)
         {
             _randomiser = randomiser;
         }
 
         public char Item => BoardPiece.Food;
 
-        public bool HandleItem(Game game, (int X, int Y) pos, out char item)
+        public bool PickupItem(Game game, (int X, int Y) pos, out char item)
         {
             game.Score++;
             var (tX, tY) = game.Snake.Position;

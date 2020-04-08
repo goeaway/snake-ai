@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Snake.Abstractions
 {
-    public interface IItemPickupReactionHandler
+    public interface IItemReactionHandler
     {
         /// <summary>
         /// Alters the game as a result of a snake in another game eating an item.

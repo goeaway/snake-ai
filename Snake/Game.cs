@@ -3,8 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
-using System.Text;
-using Snake.ItemPickupHandlers;
 
 namespace Snake
 {
@@ -150,7 +148,7 @@ namespace Snake
             {
                 var handler = _pickupHandlers.FirstOrDefault(h => h.Item == nextValue);
 
-                if (handler != null && handler.HandleItem(this, (nextX, nextY), out var item))
+                if (handler != null && handler.PickupItem(this, (nextX, nextY), out var item))
                 {
                     // raise event
                     OnGameAltered(this, new OnGameAlteredEventArgs { Item = item, Position = (nextX, nextY), Controller = _controller });
@@ -169,9 +167,9 @@ namespace Snake
         {
             foreach (var handler in _pickupHandlers)
             {
-                if (handler is IItemPickupReactionHandler && handler.Item == item)
+                if (handler is IItemReactionHandler && handler.Item == item)
                 {
-                    (handler as IItemPickupReactionHandler).ReactToItem(this, pos);
+                    (handler as IItemReactionHandler).ReactToItem(this, pos);
                     break;
                 }
             }
