@@ -1,5 +1,5 @@
 ﻿using Snake.Abstractions;
-using Snake.ItemPickupHandlers;
+using Snake.ItemHandlers;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -17,7 +17,7 @@ namespace Snake.Factories
         {
             _boardX = boardX;
             _boardY = boardY;
-            _random = new Random(seed.HasValue ? seed.Value : Environment.TickCount);
+            _random = new Random(seed ?? Environment.TickCount);
             _pickupHandlers = new List<IItemPickupHandler>
             {
                 new FoodHandler(_random),

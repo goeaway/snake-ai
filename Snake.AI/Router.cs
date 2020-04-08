@@ -6,7 +6,7 @@ using System.Text;
 
 namespace Snake.AI
 {
-    public static class RoutingEngine
+    public class Router : IRouter
     {
         private class PathPiece
         {
@@ -35,19 +35,16 @@ namespace Snake.AI
             }
         }
 
-        private static PathPiece GetSmallest(List<PathPiece> list)
-        {
-            return list?
+        private PathPiece GetSmallest(List<PathPiece> list)
+            => list?
                 .GroupBy(i => i.Combined)
                 .OrderBy(g => g.Key)
                 .FirstOrDefault()?
                 .OrderBy(i => i.ToEnd)
                 .FirstOrDefault();
-        }
 
-        private static List<(int X, int Y)> GetNeighbours()
-        {
-            return new List<(int X, int Y)>
+        private IList<(int X, int Y)> GetNeighbours()
+            => new List<(int X, int Y)>
             {
                 // left
                 (-1, 0),
@@ -58,24 +55,18 @@ namespace Snake.AI
                 // down
                 (0, 1)
             };
-        }
 
-        private static (int X, int Y) GetAdjacent((int X, int Y) to, Direction direction)
-        {
-            return
-                direction == Direction.Left ? (to.X - 1, to.Y) :
+        private (int X, int Y) GetAdjacent((int X, int Y) to, Direction direction)
+            => direction == Direction.Left ? (to.X - 1, to.Y) :
                 direction == Direction.Up ? (to.X, to.Y - 1) :
                 direction == Direction.Right ? (to.X + 1, to.Y) :
                 (to.X, to.Y + 1);
-        }
 
-        private static bool PositionInGrid<T>(T[,] grid, (int X, int Y) position)
-        {
-            return position.X >= grid.GetLowerBound(1) && position.X <= grid.GetUpperBound(1) &&
+        private bool PositionInGrid<T>(T[,] grid, (int X, int Y) position)
+            => position.X >= grid.GetLowerBound(1) && position.X <= grid.GetUpperBound(1) &&
                    position.Y >= grid.GetLowerBound(0) && position.Y <= grid.GetUpperBound(0);
-        }
 
-        private static List<Direction> ConvertToDirections(List<(int X, int Y)> path)
+        private IList<Direction> ConvertToDirections(IList<(int X, int Y)> path)
         {
             var result = new List<Direction>();
 
@@ -95,7 +86,7 @@ namespace Snake.AI
             return result;
         }
 
-        private static List<(int X, int Y)> ConvertToPositions((int X, int Y) start, List<Direction> directions)
+        private IList<(int X, int Y)> ConvertToPositions((int X, int Y) start, IList<Direction> directions)
         {
             var result = new List<(int X, int Y)> { start };
 
@@ -107,12 +98,10 @@ namespace Snake.AI
             return result;
         }
 
-        private static bool PositionValid<T>(T[,] grid, (int X, int Y) position, (int X, int Y)[] disallowed)
-        {
-            return PositionInGrid(grid, position) && !disallowed.Contains(position);
-        }
+        private bool PositionValid<T>(T[,] grid, (int X, int Y) position, (int X, int Y)[] disallowed)
+            => PositionInGrid(grid, position) && !disallowed.Contains(position);
 
-        public static List<(int X, int Y)> ShortestRoutePositions<T>(T[,] grid,
+        public IList<(int X, int Y)> Shortest<T>(T[,] grid,
             (int X, int Y) from,
             (int X, int Y) to,
             params (int X, int Y)[] disallowed)
@@ -173,18 +162,18 @@ namespace Snake.AI
             return new List<(int X, int Y)>();
         }
 
-        public static List<(int X, int Y)> LongestRouteDirections<T>(
+        public IList<(int X, int Y)> Longest<T>(
             T[,] grid, 
             (int X, int Y) from, 
             (int X, int Y) to,  
             params (int X, int Y)[] disallowed)
         {
-            var shortestRoutePositions = ShortestRoutePositions(grid, from, to, disallowed);
-            var directions = ConvertToDirections(shortestRoutePositions);
+            var shortestRoute = Shortest(grid, from, to, disallowed);
+            var directions = ConvertToDirections(shortestRoute);
 
-            var currentPos = shortestRoutePositions.First();
+            var currentPos = shortestRoute.First();
             var index = 0;
-            var alreadyAddedPositions = new List<(int X, int Y)>(shortestRoutePositions);
+            var alreadyAddedPositions = new List<(int X, int Y)>(shortestRoute);
 
             while(true)
             {
@@ -231,11 +220,11 @@ namespace Snake.AI
             return ConvertToPositions(from, directions);
         }
 
-        public static List<(int X, int Y)> HamiltonianCycle<T>(
+        public IList<(int X, int Y)> HamiltonianCycle<T>(
             T[,] grid)
         {
             // disallow 1,0 so we know it won't be added to the path
-            var path = LongestRouteDirections(grid, (2, 0), (0, 0), (1, 0));
+            var path = Longest(grid, (2, 0), (0, 0), (1, 0));
             // create a cycle by ending with 1,0
             path.Add((1,0));
             return path.ToList();

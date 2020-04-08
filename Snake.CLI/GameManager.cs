@@ -27,7 +27,7 @@ namespace Snake.CLI
             // make them act on the item being added
             foreach(var controller in _controllers.Where(c => c != e.Controller))
             {
-                controller.CurrentGame.ReactToOtherGameItem(e.Item, e.Position);
+                controller.CurrentGame.ReactToItem(e.Item, e.Position);
             }
         }
 

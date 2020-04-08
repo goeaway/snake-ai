@@ -6,8 +6,6 @@ namespace Snake.Abstractions
 {
     public interface IController
     {
-        
-
         ConsoleColor Color { get; }
         Game CurrentGame { get; }
         string Id { get; }

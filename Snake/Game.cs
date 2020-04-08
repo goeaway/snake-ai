@@ -133,8 +133,9 @@ namespace Snake
 
             var nextValue = Board.GetValue(nextX, nextY);
 
-            // if that space value is 1, return false (died)
-            if (nextValue == BoardPiece.Snake)
+            // if the value in the next space is not empty nor is it as item that's handled by anything we die
+            // (snake or blocker + any others added in future)
+            if (nextValue != BoardPiece.Empty && !_pickupHandlers.Select(h => h.Item).Contains(nextValue))
             {
                 return false;
             }

@@ -1,13 +1,10 @@
-﻿ using System;
-using System.Collections.Generic;
- using System.Linq;
- using System.Net.NetworkInformation;
- using System.Threading;
- using CommandLine;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using CommandLine;
 using Snake.Abstractions;
 using Snake.AI;
 using Snake.Factories;
-using Snake.ItemPickupHandlers;
 using Snake.Players;
 
 namespace Snake.CLI
@@ -18,15 +15,29 @@ namespace Snake.CLI
             .WithParsed(o =>
             {
                 var gameFactory = new CountdownGameFactory(40, 20);
-                var controllers = GetControllers(o.Players, o.AIPlayers, gameFactory);
+                var router = new Router();
+                var controllers = GetControllers(o.Players, o.AIPlayers, gameFactory, router);
 
                 var gameManager = new GameManager(controllers);
                 gameManager.Play(CancellationToken.None);
             });
 
-        private static IEnumerable<IController> GetControllers(uint playerCount, uint aiCount, IGameFactory gameFactory)
-            => new List<IController>()
-                .Concat(Enumerable.Range(0, (int)playerCount).Select(i => new PlayerController(PlayerOptions.GetDefault(i), gameFactory)))
-                .Concat(Enumerable.Range(0, (int)aiCount).Select(i => new AIController(AIOptions.GetDefault(i), gameFactory)));
+        private static IEnumerable<IController> GetControllers(uint playerCount, uint aiCount, IGameFactory gameFactory,
+            IRouter router)
+        {
+            var result = new List<IController>();
+
+            for (var i = 0; i < playerCount; i++)
+            {
+                result.Add(new PlayerController(PlayerOptions.GetDefault(i), gameFactory));
+            }
+
+            for (var i = 0; i < aiCount; i++)
+            {
+                result.Add(new AIController(AIOptions.GetDefault(i), gameFactory, router));
+            }
+
+            return result;
+        } 
     }
 }

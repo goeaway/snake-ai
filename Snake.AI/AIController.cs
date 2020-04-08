@@ -12,21 +12,23 @@ namespace Snake.AI
     {
         private const double SHORTCUT_SNAKE_SIZE_PERCENT_STOP = .5;
         private readonly IGameFactory _gameFactory;
-        private List<(int X, int Y)> _hamiltonPath;
+        private readonly IRouter _router;
+        private readonly AIOptions _options;
+
+        private IList<(int X, int Y)> _hamiltonPath;
         private int _index;
 
-        public string Id { get; }
 
         public Game CurrentGame { get; private set; }
 
-        public ConsoleColor Color { get; }
+        public string Id => _options.Id;
+        public ConsoleColor Color => _options.Color;
 
-        public AIController(AIOptions options, IGameFactory gameFactory)
+        public AIController(AIOptions options, IGameFactory gameFactory, IRouter router)
         {
-            Id = options.Id;
-            Color = options.Color;
-
-            _gameFactory = gameFactory;
+            _options = options ?? throw new ArgumentNullException(nameof(options));
+            _gameFactory = gameFactory ?? throw new ArgumentNullException(nameof(gameFactory));
+            _router = router ?? throw new ArgumentNullException(nameof(router));
             Reset();
         }
 
@@ -61,7 +63,7 @@ namespace Snake.AI
             // this tries to skip parts of the cycle if it won't cause us to go into ourselves
             if (CurrentGame.Snake.Count() < SHORTCUT_SNAKE_SIZE_PERCENT_STOP * CurrentGame.Board.Count)
             {
-                var newShortPath = RoutingEngine.ShortestRoutePositions(
+                var newShortPath = _router.Shortest(
                     CurrentGame.Board.ToMultiArray(),
                     headPos,
                     CurrentGame.Board.GetFoodPosition(),
@@ -102,7 +104,7 @@ namespace Snake.AI
         public void Reset()
         {
             CurrentGame = _gameFactory.CreateGame(this);
-            _hamiltonPath = RoutingEngine.HamiltonianCycle(CurrentGame.Board.ToMultiArray());
+            _hamiltonPath = _router.HamiltonianCycle(CurrentGame.Board.ToMultiArray());
         }
     }
 }

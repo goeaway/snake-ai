@@ -14,6 +14,8 @@ namespace Snake
         public const char Money = '$';
         public const char Super = '^';
         public const char Random = '?';
+        public const char BlockCreator = 'x';
+        public const char Blocker = 'X';
     }
 
     public static class Consts
